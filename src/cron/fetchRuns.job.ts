@@ -10,6 +10,9 @@ export async function runGitHubSync(): Promise<void> {
   const repos = await GitHubRepo.find();
 
   if (!repos || repos.length < 1) {
+    console.log(
+      `[${new Date().toISOString()}] GitHub run fetch stopped with no repo found.`
+    );
     return;
   }
 
