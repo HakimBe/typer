@@ -9,6 +9,10 @@ export async function runGitHubSync(): Promise<void> {
 
   const repos = await GitHubRepo.find();
 
+  if (!repos || repos.length < 1) {
+    return;
+  }
+
   for (const repo of repos) {
     try {
       const runs = await fetchWorkflowRuns(repo.name, repo.branch, repo.token);
