@@ -11,11 +11,12 @@ export const authenticate = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): Promise<any> => {
+): Promise<void> => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "Missing token!" });
+    res.status(401).json({ message: "Missing token!" });
+    return;
   }
 
   try {
@@ -26,13 +27,15 @@ export const authenticate = async (
 
     const user = await User.findById(req.userId);
     if (!user) {
-      return res.status(404).json({ message: "No user found!" });
+      res.status(404).json({ message: "No user found!" });
+      return;
     }
 
     req.userRole = user.role;
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token!" });
+    res.status(401).json({ message: "Invalid token!", error: err });
+    return;
   }
 };
 
@@ -40,9 +43,10 @@ export const isAdmin = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): Promise<any> => {
+): Promise<void> => {
   if (req.userRole != "admin") {
-    return res.status(403).json({ message: "Forbidden!" });
+    res.status(403).json({ message: "Forbidden!" });
+    return;
   }
 
   next();
@@ -52,10 +56,11 @@ export const isOwnerOrAdmin = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): Promise<any> => {
+): Promise<void> => {
   if (req.userRole === "admin" || req.userId === req.params.id) {
     return next();
   }
 
-  return res.status(403).json({ message: "Forbidden!" });
+  res.status(403).json({ message: "Forbidden!" });
+  return;
 };

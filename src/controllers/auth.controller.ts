@@ -28,7 +28,9 @@ export const signup = async (req: Request, res: Response) => {
     const token = generateToken(user.id);
     res.status(201).json({ token: token });
   } catch (err) {
-    res.status(500).json({ message: "Something went wrong with the signup!" });
+    res
+      .status(500)
+      .json({ message: "Something went wrong with the signup!", error: err });
   }
 };
 
@@ -55,6 +57,8 @@ export const login = async (req: Request, res: Response) => {
     const token = generateToken(user?.id);
     res.json({ token });
   } catch (err) {
-    res.status(500).json("Something went wrong with the login!");
+    res
+      .status(500)
+      .json({ message: "Something went wrong with the login!", error: err });
   }
 };
